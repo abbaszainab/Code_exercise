@@ -1,0 +1,45 @@
+import { test, expect } from '@playwright/test';
+
+
+test("first testcase: open home page and verify title", async ({ page }) => {
+    await page.goto('https://fifa.com/fifaplus/en/home');
+    await expect(page).toHaveTitle('FIFA | The Home of Football');
+})
+
+
+test("verify logo is visible", async ({ page }) => {
+    await page.goto('https://fifa.com/fifaplus/en/home');
+    const logo = page.locator('[href="/en/home"] img')
+    await expect(logo).toBeVisible();
+    await expect(logo).toHaveAttribute('title', 'FIFA')
+})
+
+
+test('test if page is visible after rejecting cookies', async ({ page }) => {
+    await page.goto('https://fifa.com/fifaplus/en/home');
+
+    await page.getByRole('button', { name: 'Reject All' }).click();
+
+    await page.waitForSelector('#root', { state: 'visible' });
+
+    const isVisible = await page.isVisible('#root');
+    expect(isVisible).toBe(true);
+});
+
+
+
+
+test("go to 'tickets and hospitality' page from the 'shop' option and if its is visible", async ({ page }) => {
+    test.setTimeout(60000);
+
+    await page.goto('https://www.google.com/search?q=fifa&oq=fifa&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDI3NzdqMGoyqAIAsAIB&sourceid=chrome&ie=UTF-8');
+    await page.getByRole('link', { name: 'FIFA | The Home of Football' }).click();
+    await page.locator('.onetrust-pc-dark-filter').click();
+    await page.getByRole('button', { name: 'Reject All' }).click();
+    await page.getByText('SHOP').click();
+    await page.locator('#mainLinksID').getByRole('link', { name: 'TICKETS & HOSPITALITY' }).click();
+    await page.waitForSelector('.ff-pt-0.ff-pb-16.ff-py-md-1024-24.ff-py-lg-40.landing-template_container__TBA1r', { timeout: 60000 });
+    const isVisible = await page.isVisible('.ff-pt-0.ff-pb-16.ff-py-md-1024-24.ff-py-lg-40.landing-template_container__TBA1r');
+    expect(isVisible).toBe(true);
+});
+
